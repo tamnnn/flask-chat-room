@@ -1,7 +1,7 @@
 /* Creating new instace of io and assing it the socketio var! */
 let socketio = io();
 /* Listening for the "send-bth" button to be click in the dom */
-const sendMessage = document.getElementById('send-btn');
+const sendMessage = document.getElementById('msg-form');
 
 // Get the messages container element
 const messagesContainer = document.getElementById('messages');
@@ -22,14 +22,15 @@ socketio.on('message',(data) => {
 });
 
 
-function sendMessageHandler() {
-  const messageInput = document.getElementById('MyInput');
+function sendMessageHandler(event) {
+  event.preventDefault();
+  const messageInput = document.getElementById('msg-input');
   if (messageInput.value === '') return;
   socketio.emit('message', { data: messageInput.value });
   messageInput.value = '';
 }
 
-sendMessage.addEventListener('click', sendMessageHandler);
+sendMessage.addEventListener('submit', sendMessageHandler);
 
 
 

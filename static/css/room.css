@@ -31,7 +31,7 @@
 h2 {
     text-align: center;
 }
-#MyInput 
+#msg-input 
 {
     border: 1px solid black;
     flex: 1;
