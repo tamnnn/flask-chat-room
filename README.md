@@ -50,6 +50,6 @@ docker build -t flask-chat-room .
 Once the image is built, run the following command to start the Docker container:
 ```bash
 #sudo docker run flask-chat-room
-docker run flask-chat-room
+docker run -p 8080:8080 flask-chat-room
 ```
 Open your web browser and navigate to http://localhost:8080.
