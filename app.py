@@ -53,11 +53,14 @@ def home_view():
             # Generate a random 6-digit code for the new room.
             room = generate_code(6)
             # Add the new room to the dictionary of rooms.
-            rooms[room] = {'members': 0, 'messages': []}
+            rooms[room] = {'members': set(), 'messages': []}
         # If the user wants to join a room but the code is not valid.
         elif code not in rooms:
             # Show an error message.
             return render_template('home.html', error_message='Room does not exist.', name=name, code=code)
+        # If another user is currently using the same name in the same room
+        elif name in rooms[room]['members']:
+            return render_template('home.html', error_message='Name is currently taken.', name=name, code=code)
 
         # Store the room code and user name in the session.
         session['room'] = room
@@ -68,6 +71,7 @@ def home_view():
 
     # If the form is not submitted, show the home page.
     return render_template('home.html')
+
 # Define the room page view for the chat application.
 @app.route('/room')
 def room_view():
@@ -77,7 +81,7 @@ def room_view():
     If the user is not logged in or the room does not exist, it redirects to the home page
     Otherwise, it renders the room template with the room name and messages for that room.
     """
-    # Get the room  from the session 
+    # Get the room from the session 
     room = session.get('room')
     
     if room is None or session.get('name') is None or room not in rooms:
@@ -100,7 +104,6 @@ def handle_message(data):
     # Add the content to the room's message history 
     rooms[room]['messages'].append(content)
     
-
 @socketio.on('connect')
 def handle_connect(auth):
     # Get the current room and user name from the session
@@ -114,10 +117,10 @@ def handle_connect(auth):
         return 
     # Join the room if does exist
     join_room(room)
+    # Add a member
+    rooms[room]['members'].add(name)
     # Send a message to the room indicating that the user has entered
     send({'name': name, 'message': 'has entered the room'}, to=room)
-    # Add a member
-    rooms[room]['members'] += 1
     
 # This function should be called when a client disconnects from the server
 @socketio.on('disconnect')
@@ -128,17 +131,15 @@ def handle_disconnect():
     name = session.get('name')
     # Check if the room is in the dictionary of active rooms
     if room in rooms:
-
+        members = rooms[room]['members']
         # Reduce the member count for the room
-        rooms[room]['members'] -= 1
+        members.discard(name)
+        # Send a message to the room indicating that the user has left
+        send({'name': name, 'message': 'has left the room'}, to=room)
         # If the room has no more members, remove it from the active rooms dictionary
-        if rooms[room]['members'] == 0:
+        if len(members) == 0:
             del rooms[room]
-    # Send a message to the room indicating that the user has left
-    send({'name': name, 'message': 'has left the room'}, to=room)
     
 
 if __name__ == '__main__':
     socketio.run(app, host='localhost', port=8080, debug=True)
-
-
