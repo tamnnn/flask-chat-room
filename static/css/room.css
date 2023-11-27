@@ -1,13 +1,14 @@
 @import url('main.css');
 
-.div-el {
-    display: grid;
-    place-items: center;
-    min-height: 100vh;
-    background-color: transparent;
-  }
+.leave
+{
+    text-decoration: none;
+    color: var(--color-blue);
+    font-size: large;
+    font-weight: bold;
+}
   
-.message-box {
+.chat-box {
     display: flex;
     flex-direction: column;
     align-self: stretch;
@@ -32,9 +33,11 @@
     padding: 10px;
     display: flex;
 }
+
 h2 {
     text-align: center;
 }
+
 #msg-input 
 {
     border: 1px solid black;
@@ -45,6 +48,7 @@ h2 {
     outline: none;
     border-right:none;
 }
+
 #send-btn
 {
     border: 1px solid var(--color-black);
@@ -57,9 +61,10 @@ h2 {
     padding: 12px 16px;
     transition: 0.5s;
 }
+
 #send-btn:hover
 {
-    background-color: rgb(99, 255, 16);
+    background-color: var(--color-blue);
     color:whitesmoke;
 }
 
@@ -74,6 +79,7 @@ h2 {
     border: 1px solid black;
     border-radius: 5px;
 }
+
 .muted
 {
     font-size: 10px;
