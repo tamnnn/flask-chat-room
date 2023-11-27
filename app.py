@@ -120,7 +120,7 @@ def handle_connect(auth):
     # Add a member
     rooms[room]['members'].add(name)
     # Send a message to the room indicating that the user has entered
-    send({'name': name, 'message': 'has entered the room'}, to=room)
+    send({'is_global': True, 'message': f'{name} has entered the room'}, to=room)
     
 # This function should be called when a client disconnects from the server
 @socketio.on('disconnect')
@@ -135,11 +135,10 @@ def handle_disconnect():
         # Reduce the member count for the room
         members.discard(name)
         # Send a message to the room indicating that the user has left
-        send({'name': name, 'message': 'has left the room'}, to=room)
+        send({'is_global': True, 'message': f'{name} has left the room'}, to=room)
         # If the room has no more members, remove it from the active rooms dictionary
         if len(members) == 0:
             del rooms[room]
     
-
 if __name__ == '__main__':
     socketio.run(app, host='localhost', port=8080, debug=True)
