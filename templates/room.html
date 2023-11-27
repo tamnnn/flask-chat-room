@@ -4,23 +4,37 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/room.css') }}">
 {% endblock head %}
 {% block content %}
-<a class="leave" href="{{url_for('home_view')}}">Home</a>
-<div class="chat-box">
-    <h2>Chat Room: {{room}}</h2>
-    <div class="messages" id="messages"></div>
-    <form class="inputs" id="msg-form">
+<div class="div-el">
+    <a class="leave" href="{{url_for('home_view')}}">Home</a>
+    <div class="members-box">
+        <h3>Members (<text id="members-count"></text>):</h3>
+        <hr/>
+        <div class='members' id="members"></div>
+    </div>
+    <div class="chat-box">
+        <h2>Chat Room: {{room}}</h2>
+        <hr/>
+        <div class="messages" id="messages"></div>
+        <form class="inputs" id="msg-form">
             <input type="text" name="message" id="msg-input" placeholder="message" rows="3" autocomplete="off">
-        <button type="submit" name="send" id="send-btn">
-            send
-        </button>
-    </form>
+            <button type="submit" name="send" id="send-btn">
+                send
+            </button>
+        </form>
+    </div>
 </div>
 
 <script type="text/javascript" src="{{ url_for('static',filename='js/app.js') }}"></script>
 {% for msg in messages %}
- <script type="text/javascript">
-    createMessage("{{msg.name}}","{{msg.message}}");
- </script>
+<script type="text/javascript">
+    createMessage("{{msg.name}}", "{{msg.message}}");
+</script>
+{% endfor %}
+
+{% for name in members %}
+<script type="text/javascript">
+    addMember("{{name}}");
+</script>
 {% endfor %}
 
 {% endblock content %}

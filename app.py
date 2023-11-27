@@ -126,6 +126,7 @@ def handle_connect(auth):
     # Join the room if does exist
     join_room(room)
     # Add a member
+    emit('connected', {'name': name}, to=room)
     rooms[room]['members'].add(name)
     # Send a message to the room indicating that the user has entered
     send({'is_global': True, 'message': f'{name} has entered the room'}, to=room)
@@ -137,6 +138,7 @@ def handle_disconnect():
     # Get the current room and user name from the session
     room = session.get('room')
     name = session.get('name')
+    emit('disconnected', {'name': name}, to=room)
     # Check if the room is in the dictionary of active rooms
     if room in rooms:
         members = rooms[room]['members']
