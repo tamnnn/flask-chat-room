@@ -1,7 +1,10 @@
+import random
+import re
+
 from flask import Flask, render_template, session, redirect, url_for, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
-import random
 from string import ascii_uppercase
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my-secret-key'
@@ -9,6 +12,9 @@ app.config['SECRET_KEY'] = 'my-secret-key'
 socketio = SocketIO(app)
 
 rooms = {}
+
+# Regex to match strings that only contain: a-z,A-Z,0-9,_,-, ,.
+valid_regex = re.compile('^[\w\-\.\s]+$')
 
 def generate_code(length):
     """ 
@@ -30,7 +36,7 @@ def home_view():
     # If the form is submitted.
     if request.method == 'POST':
         # Get the name and code from the form.
-        name = request.form.get('name')
+        name = request.form.get('name').strip()
         code = request.form.get('code')
 
         # Check if the user wants to join or create a room.
@@ -41,6 +47,8 @@ def home_view():
         if not name:
             # If the name is missing, show an error message.
             return render_template('home.html', error_message='Please enter a name.', name=name, code=code)
+        elif len(name) > 20 or not valid_regex.search(name):
+            return render_template('home.html', error_message='Invalid name. Allowed characters (20 max): a-z,A-Z,0-9,_,-, ,.', name=name, code=code)
         elif join != False and not code:
             # If the user wants to join a room but the code is missing, show an error message.
             return render_template('home.html', error_message='Please enter a room code.', name=name, code=code)
