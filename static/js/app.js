@@ -27,7 +27,7 @@ const createMessage = (name, message, isGlobal=false) => {
       </div>
     `;
   }
-  messagesContainer.insertAdjacentHTML('beforeend', messageTemplate);
+  messagesContainer.insertAdjacentHTML('afterbegin', messageTemplate);
 };
 socketio.on('message',(data) => {
     createMessage(data.name, data.message, data.is_global);
