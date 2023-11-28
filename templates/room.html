@@ -27,7 +27,7 @@
 <script type="text/javascript" src="{{ url_for('static',filename='js/app.js') }}"></script>
 {% for msg in messages %}
 <script type="text/javascript">
-    createMessage("{{msg.name}}", "{{msg.message}}");
+    createMessage("{{msg.name}}", {{ msg.message|tojson|safe }});
 </script>
 {% endfor %}
 

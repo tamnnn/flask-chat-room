@@ -16,7 +16,7 @@ const createMessage = (name, message, isGlobal=false) => {
   if (isGlobal) {
     messageTemplate = `
       <div class="text">
-        <span class="muted">&lt;${message}&gt;</span>
+        <span class="muted">${message}</span>
         <span class="muted">${currentDate}</span>
       </div>
     `;
@@ -47,12 +47,12 @@ sendMessage.addEventListener('submit', sendMessageHandler);
 
 
 const addMember = (name) => {
-  let el = document.getElementById(name);
+  let el = document.getElementById("@"+name);
   if (!el) {
     memberCount += 1
-    document.getElementById('members-count').innerHTML = memberCount
+    document.getElementById('members-count').innerText = memberCount
     const messageTemplate = `
-      <div id="${name}">
+      <div id="@${name}">
         <span>${name}</span>
       </div>
     `;
@@ -64,10 +64,10 @@ socketio.on('connected', (data) => {
 });
 
 const removeMember = (name) => {
-  let el = document.getElementById(name);
+  let el = document.getElementById("@"+name);
   if (el) {
     memberCount -= 1
-    document.getElementById('members-count').innerHTML = memberCount
+    document.getElementById('members-count').innerText = memberCount
     el.parentNode.removeChild(el)
   }
 };

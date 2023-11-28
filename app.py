@@ -1,20 +1,28 @@
+import html
 import random
 import re
+from functools import partial
+from string import ascii_uppercase
 
+from bleach.sanitizer import Cleaner
+from bleach.linkifier import LinkifyFilter
 from flask import Flask, render_template, session, redirect, url_for, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
-from string import ascii_uppercase
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'my-secret-key'
 
 socketio = SocketIO(app)
-
 rooms = {}
-
+# Sanitizes text fragments for use in an HTML context
+cleaner = Cleaner(
+    strip_comments=False,
+    filters=[partial(LinkifyFilter, parse_email=True)],
+)
 # Regex to match strings that only contain: a-z,A-Z,0-9,_,-, ,.
 valid_regex = re.compile('^[\w\-\.\s]+$')
+
 
 def generate_code(length):
     """ 
@@ -44,11 +52,9 @@ def home_view():
         create = request.form.get('create', False)
 
         # Validate the form inputs.
-        if not name:
-            # If the name is missing, show an error message.
-            return render_template('home.html', error_message='Please enter a name.', name=name, code=code)
-        elif len(name) > 20 or not valid_regex.search(name):
-            return render_template('home.html', error_message='Invalid name. Allowed characters (20 max): a-z,A-Z,0-9,_,-, ,.', name=name, code=code)
+        if not name or len(name) > 30 or not valid_regex.search(name):
+            # If the name is invalid, show an error message.
+            return render_template('home.html', error_message='Please enter a valid name.', name=name, code=code)
         elif join != False and not code:
             # If the user wants to join a room but the code is missing, show an error message.
             return render_template('home.html', error_message='Please enter a room code.', name=name, code=code)
@@ -106,7 +112,7 @@ def handle_message(data):
     if room not in rooms:
         return 
     # Construct the message content
-    content = {'name': name, 'message': data['data']}
+    content = {'name': name, 'message': cleaner.clean(html.escape(data['data']))}
     # Send the message to all clients in the room
     send(content, to=room)
     # Add the content to the room's message history 
@@ -129,7 +135,7 @@ def handle_connect(auth):
     emit('connected', {'name': name}, to=room)
     rooms[room]['members'].add(name)
     # Send a message to the room indicating that the user has entered
-    send({'is_global': True, 'message': f'{name} has entered the room'}, to=room)
+    send({'is_global': True, 'message': f'<b>{name}</b> has entered the room'}, to=room)
     
 # This function should be called when a client disconnects from the server
 @socketio.on('disconnect')
@@ -145,7 +151,7 @@ def handle_disconnect():
         # Reduce the member count for the room
         members.discard(name)
         # Send a message to the room indicating that the user has left
-        send({'is_global': True, 'message': f'{name} has left the room'}, to=room)
+        send({'is_global': True, 'message': f'<b>{name}</b> has left the room'}, to=room)
         # If the room has no more members, remove it from the active rooms dictionary
         if len(members) == 0:
             del rooms[room]
