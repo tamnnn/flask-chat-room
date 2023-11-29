@@ -18,7 +18,8 @@
 .members-box {
     grid-column-start: 1;
     height: 80vh;
-    width: 20vh;
+    width: 20vw;
+    min-width: 200px;
     padding: 12px 16px;
     border: 1px solid var(--color-black);
     border-radius: 10px;
@@ -35,6 +36,7 @@
 }
 #members > * {
     margin: 5px 0;
+    white-space: pre;
 }
   
 .chat-box {
@@ -44,7 +46,8 @@
     align-self: stretch;
     align-items: stretch;
     height: 80vh;
-    width: 60vh;
+    width: 60vw;
+    min-width: 600px;
     border: 1px solid var(--color-black);
     border-radius: 10px;
     background-color: transparent;
@@ -103,15 +106,24 @@ h2 {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
     padding: 10px 10px;
     margin-bottom: 5px;
     border: 1px solid black;
     border-radius: 5px;
+
+    .msg {
+        white-space: break-spaces;
+        overflow-wrap: anywhere;
+        padding-right: 10px;
+    }
+
+    .date {
+        flex: 1 0 auto;
+        text-align: right;
+    }
 }
 
-.muted
-{
+.muted {
     font-size: 10px;
     color: darkgray;
 }

@@ -16,16 +16,16 @@ const createMessage = (name, message, isGlobal=false) => {
   if (isGlobal) {
     messageTemplate = `
       <div class="text">
-        <span class="muted">${message}</span>
-        <span class="muted">${currentDate}</span>
+        <span class="msg muted">${message}</span>
+        <span class="date muted">${currentDate}</span>
       </div>
     `;
   }
   else {
     messageTemplate = `
       <div class="text">
-        <span><strong>${name}</strong>: ${message}</span>
-        <span class="muted">${currentDate}</span>
+        <span class="msg"><strong>${name}</strong>: ${message}</span>
+        <span class="date muted">${currentDate}</span>
       </div>
     `;
   }
@@ -51,11 +51,7 @@ const addMember = (name) => {
   if (!el) {
     memberCount += 1
     document.getElementById('members-count').innerText = memberCount
-    const messageTemplate = `
-      <div id="@${name}">
-        <span>${name}</span>
-      </div>
-    `;
+    const messageTemplate = `<div id="@${name}"><span>${name}</span></div>`;
     membersContainer.insertAdjacentHTML('beforeend', messageTemplate);
   }
 };
