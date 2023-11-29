@@ -8,10 +8,12 @@ from bleach.sanitizer import Cleaner
 from bleach.linkifier import LinkifyFilter
 from flask import Flask, render_template, session, redirect, url_for, request
 from flask_socketio import SocketIO, emit, join_room, leave_room, send
+from flask_wtf import CSRFProtect
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'my-secret-key'
+app.config.from_object("config")
+csrf = CSRFProtect(app) 
 
 socketio = SocketIO(app)
 rooms = {}

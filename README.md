@@ -9,7 +9,7 @@ The project is built with the Flask web framework, which provides a lightweight 
 # Project Features
 ##### . Chat room creation  
 ##### . Real-time messaging between users in the same chat room
-##### .Chat room history and message persistence
+##### . Chat room history and message persistence
 # Technologies Used
 ##### . Python 3.x
 
